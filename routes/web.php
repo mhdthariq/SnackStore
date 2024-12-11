@@ -6,13 +6,14 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PesanController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman Utama
 Route::get('/', function () {
     return view('welcome');
 });
-
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 // Dashboard
 Route::get('/dashboard', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])
