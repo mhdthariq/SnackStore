@@ -53,11 +53,11 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      */
-    public function show($id)
-{
-    $product = Product::with('category')->findOrFail($id);
-    return view('show', compact('product'));
-}
+    public function show(int $id)
+    {
+        $product = Product::findOrFail($id);
+        return view('show', compact('product'));
+    }
 
 
 
@@ -103,5 +103,4 @@ class ProductController extends Controller
         $product->delete(); // Hapus produk
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
-    
 }

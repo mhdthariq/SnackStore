@@ -20,6 +20,7 @@
                                 <a href="{{ route('products.show', $product->id) }}">
                                         <h5 class="text-lg font-semibold text-gray-900 dark:text-gray-200">{{ $product->name }}</h5>
                                     </a>
+                                    <p class="text-gray-600 dark:text-gray-400 mb-2"><span class="font-bold">Deskripsi:</span>{{ $product->description }}</p>
                                     <p class="text-gray-800 dark:text-gray-300 font-bold mt-4"><span class="font-bold">Harga:</span> {{ $product->formatted_price }}</p>
                                     <a href="{{ route('products.show', $product->id) }}" class="btn btn-primary bg-blue-500 text-white px-4 py-2 rounded mt-4 inline-block"><i class="fa fa-shopping-cart mr-2"></i>Pesan</a>
                                 </div>
