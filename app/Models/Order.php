@@ -39,11 +39,10 @@ class Order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function items()
-{
-    return $this->hasMany(OrderItem::class, 'pesanan_id', 'id');
-}
-
+    public function items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'order_id');
+    }
 
     public function payments(): HasMany
     {
