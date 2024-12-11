@@ -16,7 +16,12 @@ class CartController extends Controller
         ]);
 
         // Ambil produk berdasarkan ID
-        $product = Product::findOrFail($productId);
+        $product = Product::find($productId);
+
+        // Pastikan produk ada
+        if (!$product) {
+            return redirect()->back()->withErrors('Produk tidak ditemukan.');
+        }
 
         // Tambahkan data ke tabel carts
         Cart::create([
@@ -40,7 +45,12 @@ class CartController extends Controller
         // Cari item keranjang berdasarkan ID
         $cartItem = Cart::where('user_id', auth()->id())
                         ->where('id', $cartId)
-                        ->firstOrFail();
+                        ->first();
+
+        // Pastikan item keranjang ada
+        if (!$cartItem) {
+            return redirect()->route('cart.index')->withErrors('Item keranjang tidak ditemukan.');
+        }
 
         // Update jumlah produk dalam keranjang
         $cartItem->quantity = $request->quantity;
@@ -56,7 +66,12 @@ class CartController extends Controller
         // Cari item keranjang berdasarkan ID
         $cartItem = Cart::where('user_id', auth()->id())
                         ->where('id', $cartId)
-                        ->firstOrFail();
+                        ->first();
+
+        // Pastikan item keranjang ada
+        if (!$cartItem) {
+            return redirect()->route('cart.index')->withErrors('Item keranjang tidak ditemukan.');
+        }
 
         // Hapus item dari keranjang
         $cartItem->delete();
