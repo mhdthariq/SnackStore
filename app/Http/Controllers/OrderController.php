@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -12,7 +12,11 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        // Ambil semua pesanan untuk pengguna yang sedang login
+        $orders = Order::where('user_id', Auth::id())->get();
+
+        // Kirim data ke view
+        return view('order.history', compact('orders'));
     }
 
     /**

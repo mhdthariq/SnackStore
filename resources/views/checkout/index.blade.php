@@ -73,19 +73,21 @@
                     @enderror
                 </div>
 
-                <!-- Metode Pembayaran -->
+                <!-- Pilihan Provinsi -->
                 <div class="mb-4">
-                    <label for="payment_method" class="block text-sm font-medium text-gray-700">Metode Pembayaran</label>
+                    <label for="province_id" class="block text-sm font-medium text-gray-700">Provinsi</label>
                     <select 
-                        name="payment_method" 
-                        id="payment_method" 
+                        name="province_id" 
+                        id="province_id" 
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md" 
                         required>
-                        <option value="cod">Cash On Delivery (COD)</option>
-                        <option value="bank_transfer">Transfer Bank</option>
-                        <option value="credit_card">Kartu Kredit</option>
+                        <option value="">Pilih Provinsi</option>
+                        <option value="1">Provinsi 1</option>
+                        <option value="2">Provinsi 2</option>
+                        <option value="3">Provinsi 3</option>
+                        <!-- Tambahkan provinsi lainnya sesuai kebutuhan -->
                     </select>
-                    @error('payment_method')
+                    @error('province_id')
                         <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
                     @enderror
                 </div>
