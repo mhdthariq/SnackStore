@@ -10,6 +10,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Enums\OrderStatus;
 
 class PesanController extends Controller
 {
@@ -160,27 +161,47 @@ public function checkout()
 
     public function completeCheckout(Request $request)
     {
-        // Validate the address and other necessary fields
+        \Log::info('Complete Checkout called', $request->all());
+        
+        // Validasi alamat dan field lainnya yang diperlukan
         $validatedData = $request->validate([
             'address' => 'required|string|max:255',
+            'province_id' => 'required|integer', // Validasi untuk province_id
         ]);
 
-        $pesanan_utama = Order::where('user_id', Auth::user()->id)
-            ->where('status', 0) // Pending orders only
-            ->firstOrFail();
+        // Buat nomor pesanan
+        $orderNumber = 'OR-' . strtoupper(uniqid()); // Contoh format nomor pesanan
 
-        // Update the order with the validated address
-        $pesanan_utama->update([
+        // Buat pesanan baru
+        $pesanan_utama = Order::create([
+            'user_id' => Auth::user()->id,
             'address' => $validatedData['address'],
-            'status' => 1, // Set the status to 'completed' or 'processed'
+            'status' => OrderStatus::New->value, // Menggunakan enum
+            'total_price' => 0, // Total harga akan dihitung nanti
+            'number' => $orderNumber, // Menambahkan nomor pesanan
+            'province_id' => $validatedData['province_id'], // Menyimpan province_id
         ]);
 
-        // Update the stock for all the products in the order
-        $cartItems = OrderItem::where('order_id', $pesanan_utama->id)->get();
+        // Update stok untuk semua produk dalam pesanan
+        $cartItems = Cart::where('user_id', Auth::user()->id)->get();
         foreach ($cartItems as $item) {
             $product = $item->product;
             $product->decrement('stock', $item->quantity);
+
+            // Tambahkan item ke tabel order_items
+            OrderItem::create([
+                'order_id' => $pesanan_utama->id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'unit_price' => $item->price,
+            ]);
         }
+
+        // Hitung total harga
+        $this->updateOrderTotal($pesanan_utama);
+
+        // Hapus item dari keranjang setelah checkout
+        Cart::where('user_id', Auth::user()->id)->delete();
 
         return redirect()->route('order.history')->with('success', 'Checkout completed successfully.');
     }
@@ -193,7 +214,7 @@ public function checkout()
             return $item->quantity * $item->price;
         });
 
-        $shippingCost = 50000; // Fixed or dynamic shipping cost
+        $shippingCost = 50000; // Biaya pengiriman tetap
         $total = $subtotal + $shippingCost;
 
         // Update the total price of the order
